@@ -1,25 +1,23 @@
 import mongoose from "mongoose";
 
+export async function connect() {
+  try {
+    const uri = process.env.MONGODB_URI;
+    console.log("Mongo URI:", uri); // <-- check if it's defined
+    console.log("ENV file check:", process.env.MONGODB_URI);
 
-export async function connectDB(){
-    try {
-        mongoose.connect(process.env.MONGODB_URI );
 
-        const connection = mongoose.connection;
+    if (!uri) throw new Error("MONGODB_URI is not defined in .env.local");
 
-        connection.on('connected', ()=>{
-            console.log("MongoDB connected successfully");
-        })
+    await mongoose.connect(uri); // <-- await is crucial
+    console.log("MongoDB connected successfully");
 
-        connection.on('error',(err)=>{
-            console.log('MongoDB connection error please makesure MongoDB is running. ', err );
-            process.exit();
-        })
-
-    } catch (error) {
-        console.log("Something went wrong");
-        console.log(error);
-    }
+    mongoose.connection.on("error", (err) => {
+      console.error("MongoDB connection error, make sure MongoDB is running.", err);
+      process.exit(1);
+    });
+  } catch (error: any) {
+    console.error("Something went wrong while connecting to MongoDB:", error.message);
+    process.exit(1);
+  }
 }
-
-

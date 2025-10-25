@@ -55,7 +55,10 @@ if(user.email.length > 0 && user.password.length > 0 && user.username.length > 0
   const onSignUp = async ()=>{
     try {
       setLoading(true);
+      console.log("User data before signup:", user);
+
 const response = await axios.post("/api/users/signup", user);
+
      console.log("Signup successfully", response.data);
 router.push("/login");
     } catch (error:any) {
